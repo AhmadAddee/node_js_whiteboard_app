@@ -1,23 +1,47 @@
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import "./App.css";
+import Container from "./components/container/Container";
+import Chart from "./components/chart/Chart";
+import Routes from "./Routes";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="container-fluid ">
+      <nav>
+        <div className="nav-wrapper">
+          <a href="/" className="brand-logo">
+            PostGram
+          </a>
+          <ul id="nav-mobile" className="right hide-on-med-and-down">
+            <li>
+              <a href="/users">My Profile</a>
+            </li>
+            <li>
+              <a href="/myinbox">Messages</a>
+            </li>
+            <li>
+              <a href="/addpost">Create post</a>
+            </li>
+            <li>
+              <a href="/">Search profile</a>
+            </li>
+            <li>
+              <a href="/chart">Charts</a>
+            </li>
+            <li>
+              <a href="/whiteboard">White board</a>
+            </li>
+            <li>
+              {localStorage.getItem("username") !== "" && (
+                <a href="/logout">Log out</a>
+              )}
+            </li>
+          </ul>
+        </div>
+      </nav>
+      <div className="row">
+        <Routes />
+      </div>
     </div>
   );
 }
