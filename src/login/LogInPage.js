@@ -2,39 +2,66 @@ import { useState } from "react";
 import { useHistory } from "react-router-dom";
 import axios from "axios";
 import { useToken } from "../authentication/useToken";
+import { useLocalState } from "../authentication/useLocalState";
+import jwt_decode from "jwt-decode";
 
 function LogInPage() {
-  const [token, setToken] = useToken("");
+  const [token, setToken] = useToken("", "");
 
   const [errorMessage, setErrorMessage] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState(null);
+  const [jwt, setJwt] = useLocalState("", "jwt");
 
   localStorage.setItem("messageReceiver", "");
   const history = useHistory();
 
   const onLogInClicked = async () => {
-    const response = await axios.post("http://localhost:8080/user/login", {
+    const reqBody = {
       username: username,
       password: password,
-    });
+    };
 
+    //const response = await axios.post
+    fetch("http://localhost:8081/api/auth/login", {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      method: "post",
+      body: JSON.stringify(reqBody),
+    })
+      .then((res) => {
+        console.log(res);
+        return res.status === 200
+          ? Promise.all([res.json(), res.headers])
+          : Promise.reject("invalid login attempt");
+      })
+      .then(([body, headers]) => {
+        setJwt(headers.get("authorization"));
+        //setToken(headers.get("authorization"));
+        console.log(headers.get("Authorization"));
+        console.log(body);
+      })
+      //.then(() => {
+      //if (headers.get("authorization") !== null) {
+      //console.log(jwt);
+      //history.push("/");
+      //setErrorMessage("Successfully logged in!");
+      //window.location.reload();
+      //} else {
+      //setErrorMessage("Something went bananas, try again!");
+      //}
+      //})
+      .catch((message) => {
+        alert(message);
+      });
+    /*
     setToken(response.data.username);
     console.log("from login page, response.data.username and token");
     console.log(response.data.username);
     console.log(token);
-
-    if (
-      response.data.username === username &&
-      response.data.password === password
-    ) {
-      history.push("/");
-      setErrorMessage("Successfully logged in!");
-      window.location.reload();
-    } else {
-      setErrorMessage("Something went bananas, try again!");
-    }
+*/
   };
 
   return (

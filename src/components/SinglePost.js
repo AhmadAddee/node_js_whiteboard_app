@@ -3,6 +3,7 @@ import { useState } from "react";
 import SingleUser from "./SingleUser";
 import axios from "axios";
 import { useHistory } from "react-router-dom";
+import jwt_decode from "jwt-decode";
 
 // src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSLl892U8nBz93LjRN9WQSs9w3tcvqm_rZpoqTV4aXbng&s"
 
@@ -40,7 +41,8 @@ function SinglePost({ item }) {
             <div className="card-action">
               <button
                 onClick={() => {
-                  if (item.creator !== localStorage.getItem("username")) {
+                  var username = jwt_decode(localStorage.getItem("jwt")).sub;
+                  if (item.creator !== username) {
                     localStorage.setItem("messageReceiver", item.creator);
                     history.push("/profile");
                     window.location.reload();

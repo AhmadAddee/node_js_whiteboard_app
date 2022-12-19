@@ -1,15 +1,20 @@
 import React, { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import SinglePost from "./SinglePost";
+import jwt_decode from "jwt-decode";
 
 function SingleUser({ item }) {
   const [posts, setPosts] = useState([]);
 
-  let url =
-    "http://localhost:8080/post/get-posts?creator=" +
-    localStorage.getItem("username");
+  var username = jwt_decode(localStorage.getItem("jwt")).sub;
+  let url = "post/get-posts?creator=" + username;
   useEffect(() => {
-    fetch(url)
+    fetch(url, {
+      headers: {
+        Authorization: "Bearer " + localStorage.getItem("jwt"),
+        "Content-Type": "application/json",
+      },
+    })
       .then((response) => response.json())
       .then((data) => setPosts(data));
   }, [posts]);

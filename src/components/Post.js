@@ -10,7 +10,13 @@ export default class Post extends Component {
   }
 
   componentDidMount() {
-    fetch("http://localhost:8080/post/get-all")
+    console.log("in posts", localStorage.getItem("jwt"));
+    fetch("post/get-all", {
+      headers: {
+        Authorization: "Bearer " + localStorage.getItem("jwt"),
+        "Content-Type": "application/json",
+      },
+    })
       .then((response) => response.json())
       .then((data) => this.setState({ posts: data }));
   }

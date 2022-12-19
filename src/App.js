@@ -32,7 +32,7 @@ function App() {
               <a href="/whiteboard">White board</a>
             </li>
             <li>
-              {localStorage.getItem("username") !== "" && (
+              {localStorage.getItem("jwt") !== "" && (
                 <a href="/logout">Log out</a>
               )}
             </li>

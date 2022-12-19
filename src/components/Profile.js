@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import axios from "axios";
+import jwt_decode from "jwt-decode";
 
 function Profile() {
   const history = useHistory();
@@ -16,25 +17,61 @@ function Profile() {
   });
   const [message, setMessage] = useState("");
 
-  let url =
-    "http://localhost:8080/user/get-user?username=" +
-    localStorage.getItem("messageReceiver");
+  let url = "user/get-user?username=" + localStorage.getItem("messageReceiver");
   useEffect(() => {
-    fetch(url)
+    fetch(url, {
+      headers: {
+        Authorization: "Bearer " + localStorage.getItem("jwt"),
+        "Content-Type": "application/json",
+      },
+    })
       .then((response) => response.json())
       .then(setUser);
+    setPostsF();
   }, [localStorage.getItem("messageReceiver")]);
+
+  const setPostsF = () => {
+    var url = "post/get-posts?creator=" + receiver;
+    console.log(url);
+    fetch(url, {
+      headers: {
+        Authorization: "Bearer " + localStorage.getItem("jwt"),
+        "Content-Type": "application/json",
+      },
+      method: "GET",
+    })
+      .then((response) => response.json())
+      .then((data) => setUser({ postList: data }));
+  };
 
   const onSendClicked = async (e) => {
     e.preventDefault();
+    var username = jwt_decode(localStorage.getItem("jwt")).sub;
 
-    let messUrl = "http://localhost:8080/message/send";
+    var messageBody = {
+      sender: username,
+      receiver: receiver,
+      content: message,
+    };
+    let messUrl = "message/send";
+    /*
     const result = await axios.post(messUrl, {
       sender: sender,
       receiver: receiver,
       content: message,
     });
-    console.log(result.data);
+    */
+    fetch(messUrl, {
+      headers: {
+        Authorization: "Bearer " + localStorage.getItem("jwt"),
+        "Content-Type": "application/json",
+      },
+      method: "POST",
+      body: JSON.stringify(messageBody),
+    });
+    //.then((response) => response.json())
+    //.then((data) => setUser({ postList: data }));
+    //console.log(result.data);
 
     localStorage.setItem("messageReceiver", "");
     history.push("/");
@@ -49,7 +86,6 @@ function Profile() {
           <div>Full name: {user.fullName}</div>
           <div>Age: {user.age}</div>
           <div className="input-field col s6">
-            <i className="material-icons prefix">mode_edit</i>
             <textarea
               value={message}
               onChange={(e) => setMessage(e.target.value)}

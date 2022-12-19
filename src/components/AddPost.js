@@ -2,23 +2,27 @@ import React, { Component } from "react";
 import { useState } from "react";
 import { useHistory } from "react-router-dom";
 import axios from "axios";
+import jwt_decode from "jwt-decode";
 
 function AddPost() {
   const [content, setContent] = useState("");
   const [creator, setCreator] = useState(localStorage.getItem("username"));
   const history = useHistory();
+  var decode = jwt_decode(localStorage.getItem("jwt"));
+  console.log(decode.sub);
 
   const submitPost = (e) => {
     e.preventDefault();
 
     let post = {
-      creator: creator,
+      creator: decode.sub,
       content: content,
     };
 
-    fetch("http://localhost:8080/post/create", {
+    fetch("post/create", {
       method: "POST",
       headers: {
+        Authorization: "Bearer " + localStorage.getItem("jwt"),
         "Content-Type": "application/json",
       },
       body: JSON.stringify(post),

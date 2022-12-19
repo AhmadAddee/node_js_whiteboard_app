@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import SingleUser from "./SingleUser";
+import jwt_decode from "jwt-decode";
 
 export default class User extends Component {
   constructor(props) {
@@ -12,15 +13,22 @@ export default class User extends Component {
         postList: [],
         age: 0,
       },
-      username: localStorage.getItem("username"),
-      url:
-        "http://localhost:8080/user/get-user?username=" +
-        localStorage.getItem("username"),
+
+      //username: jwt_decode(localStorage.getItem("jwt")).sub,
+      //url: "user/get-user?username=" + this.username,
     };
   }
 
   componentDidMount() {
-    fetch(this.state.url)
+    var username = jwt_decode(localStorage.getItem("jwt")).sub;
+    var url = "user/get-user?username=" + username;
+    console.log(url);
+    fetch(url, {
+      headers: {
+        Authorization: "Bearer " + localStorage.getItem("jwt"),
+        "Content-Type": "application/json",
+      },
+    })
       .then((response) => response.json())
       .then((data) => this.setState({ user: data }));
   }

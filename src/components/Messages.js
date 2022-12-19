@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import SingleMessage from "./SingleMessage";
+import jwt_decode from "jwt-decode";
 
 export default class Messages extends Component {
   constructor(props) {
@@ -13,7 +14,14 @@ export default class Messages extends Component {
   }
 
   componentDidMount() {
-    fetch(this.state.url)
+    var username = jwt_decode(localStorage.getItem("jwt")).sub;
+    var url = "message/inbox?username=" + username;
+    fetch(url, {
+      headers: {
+        Authorization: "Bearer " + localStorage.getItem("jwt"),
+        "Content-Type": "application/json",
+      },
+    })
       .then((response) => response.json())
       .then((data) => this.setState({ messages: data }));
   }
