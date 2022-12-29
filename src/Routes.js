@@ -41,12 +41,12 @@ function Routes() {
         <PrivateRoute path="/myinbox">
           <Messages />
         </PrivateRoute>
-        <Route path="/whiteboard" exact>
+        <PrivateRoute path="/whiteboard" exact>
           <Container />
-        </Route>
-        <Route path="/chart">
+        </PrivateRoute>
+        <PrivateRoute path="/chart">
           <Chart />
-        </Route>
+        </PrivateRoute>
       </Switch>
     </Router>
   );

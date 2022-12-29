@@ -4,6 +4,7 @@ import axios from "axios";
 import { useToken } from "../authentication/useToken";
 import { useLocalState } from "../authentication/useLocalState";
 import jwt_decode from "jwt-decode";
+import AuthService from "../services/auth-service";
 
 function LogInPage() {
   const [token, setToken] = useToken("", "");
@@ -17,12 +18,19 @@ function LogInPage() {
   localStorage.setItem("messageReceiver", "");
   const history = useHistory();
 
-  const onLogInClicked = async () => {
+  const onLogInClicked = (e) => {
+    e.preventDefault();
+    //async
     const reqBody = {
       username: username,
       password: password,
     };
 
+    AuthService.login(username, password).then(
+      (res) => setJwt(res.accessToken)
+      //console.log(res.accessToken)
+    );
+    /*
     //const response = await axios.post
     fetch("http://localhost:8081/api/auth/login", {
       headers: {
@@ -43,6 +51,8 @@ function LogInPage() {
         console.log(headers.get("Authorization"));
         console.log(body);
       })
+
+      /////////////////////////////////////////////////
       //.then(() => {
       //if (headers.get("authorization") !== null) {
       //console.log(jwt);

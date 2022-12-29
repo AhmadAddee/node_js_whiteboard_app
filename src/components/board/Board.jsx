@@ -11,6 +11,8 @@ class Board extends React.Component {
     super(props);
 
     this.socket.on("canvas-data", function (data) {
+      const user = JSON.parse(localStorage.getItem("user"));
+      console.log(user.username);
       var root = this;
       var interval = setInterval(function () {
         if (root.isDrawing) return;

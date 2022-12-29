@@ -17,6 +17,7 @@ function LogOutPage() {
 
     localStorage.setItem("messageReceiver", "");
     localStorage.removeItem("jwt");
+    localStorage.removeItem("user");
     history.push("/login");
     window.location.reload();
   };

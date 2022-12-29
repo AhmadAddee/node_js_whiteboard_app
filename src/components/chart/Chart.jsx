@@ -1,4 +1,7 @@
-import React, { useState, useEffect } from "react";
+//import React, { useState, useEffect } from "react";
+import ChartData from "./ChartData";
+import { useState, useEffect } from "react";
+
 import {
   BarChart,
   Bar,
@@ -14,77 +17,13 @@ import {
 import "../../App.css";
 
 function Chart() {
-  const [data, setData] = useState([""]);
-  const [hashMap, setHashMap] = useState(new Map());
+  const [data, hashMap] = ChartData();
 
-  useEffect(() => {
-    fetch(
-      "http://localhost:8888/hello/name?name=" +
-        localStorage.getItem("username")
-    )
-      .then((response) => response.json())
-      //.then((data) => JSON.stringify(data))
-      .then((text) => setData(text))
-      .then(() => {
-        var unique = [];
-
-        data.forEach((element) => {
-          if (!unique.includes(element)) {
-            unique.push(element);
-            setHashMap(hashMap.set(element, 1));
-          } else {
-            setHashMap(hashMap.set(element, hashMap.get(element) + 1));
-          }
-        });
-        console.log("H size " + hashMap.size);
-        for (let [key, value] of hashMap) {
-          console.log(key + " = " + value);
-        }
-      });
-  }, [data]);
-  console.log("size before: " + data.length);
-  /*
-  const fixData = () => {
-    var unique = [];
-
-    data.forEach((element) => {
-      if (!unique.includes(element)) {
-        unique.push(element);
-        hashMap.set(element, 1);
-      } else {
-        hashMap.set(element, hashMap.get(element) + 1);
-      }
-    });
-    //setData(unique);
-    console.log("H size " + hashMap.size);
-    for (let [key, value] of hashMap) {
-      console.log(key + " = " + value);
-    }
-
-    //const myObject = hashMap.entries();
-    console.log(iterator1.next().value);
-    console.log(iterator1.next().value);
-  };
-
-  
-  {data.map((d) => (
-        <div>
-          <p>{d}</p>
-        </div>
-      ))}
-
-hashMap.forEach(function (key, value) {
-        <div>
-          <p>h {key}</p>
-        </div>;
-      })
-
-      */
   return (
     <div style={{ textAlign: "center" }}>
       <h1>Here is the chart</h1>
       <h3>The data: </h3>
-      {data.map((d, id) => (
+      {data?.map((d, id) => (
         <p key={id}>{d}</p>
       ))}
 
