@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
-import axios from "axios";
-import jwt_decode from "jwt-decode";
+//import jwt_decode from "jwt-decode";
+import FetchMessagesData from "./messages/messageService";
+import FetchPostData from "./PostHome/postData";
 
 function Profile() {
   const history = useHistory();
-  const [sender, setSender] = useState(localStorage.getItem("username"));
+  const [errorMessage, setErrorMessage] = useState("");
   const [receiver, setReceiver] = useState(
     localStorage.getItem("messageReceiver")
   );
@@ -13,11 +14,13 @@ function Profile() {
     username: "",
     fullName: "",
     age: 0,
-    postList: [],
   });
+  const [posts, setPosts] = useState([]);
   const [message, setMessage] = useState("");
 
-  let url = "user/get-user?username=" + localStorage.getItem("messageReceiver");
+  let url =
+    "http://localhost:8081/user/get-user?username=" +
+    localStorage.getItem("messageReceiver");
   useEffect(() => {
     fetch(url, {
       headers: {
@@ -26,12 +29,15 @@ function Profile() {
       },
     })
       .then((response) => response.json())
-      .then(setUser);
+      .then((user) => {
+        console.log(user);
+        setUser(user);
+      });
     setPostsF();
   }, [localStorage.getItem("messageReceiver")]);
 
   const setPostsF = () => {
-    var url = "post/get-posts?creator=" + receiver;
+    var url = "http://localhost:8081/post/get-posts?creator=" + receiver;
     console.log(url);
     fetch(url, {
       headers: {
@@ -41,41 +47,29 @@ function Profile() {
       method: "GET",
     })
       .then((response) => response.json())
-      .then((data) => setUser({ postList: data }));
+      .then((data) => setPosts(data));
   };
 
   const onSendClicked = async (e) => {
     e.preventDefault();
-    var username = jwt_decode(localStorage.getItem("jwt")).sub;
 
     var messageBody = {
-      sender: username,
       receiver: receiver,
       content: message,
     };
-    let messUrl = "message/send";
-    /*
-    const result = await axios.post(messUrl, {
-      sender: sender,
-      receiver: receiver,
-      content: message,
-    });
-    */
-    fetch(messUrl, {
-      headers: {
-        Authorization: "Bearer " + localStorage.getItem("jwt"),
-        "Content-Type": "application/json",
-      },
-      method: "POST",
-      body: JSON.stringify(messageBody),
-    });
-    //.then((response) => response.json())
-    //.then((data) => setUser({ postList: data }));
-    //console.log(result.data);
 
-    localStorage.setItem("messageReceiver", "");
-    history.push("/");
-    window.location.reload();
+    FetchMessagesData.sendMessage(messageBody)
+      .then((response) => {
+        if (response.status === 201) {
+          localStorage.setItem("messageReceiver", "");
+          history.push("/");
+          window.location.reload();
+        }
+      })
+      .catch((error) => {
+        setErrorMessage(error.message);
+        console.log(error);
+      });
   };
 
   return (
@@ -101,11 +95,12 @@ function Profile() {
               Send
               <i className="material-icons right">send</i>
             </button>
+            {errorMessage && <div style={{ color: "red" }}>{errorMessage}</div>}
           </div>
         </div>
       </form>
       <b>posts:</b>
-      {user.postList.map((post) => (
+      {posts?.map((post) => (
         <div className="row" key={post.id}>
           <div className="col s12 m6">
             <div className="card blue-grey darken-1">

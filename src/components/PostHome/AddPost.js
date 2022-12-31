@@ -1,15 +1,14 @@
-import React, { Component } from "react";
+import React from "react";
 import { useState } from "react";
 import { useHistory } from "react-router-dom";
-import axios from "axios";
 import jwt_decode from "jwt-decode";
+import FetchPostData from "./postData";
 
 function AddPost() {
   const [content, setContent] = useState("");
-  const [creator, setCreator] = useState(localStorage.getItem("username"));
+  const [errorMessage, setErrorMessage] = useState("");
   const history = useHistory();
   var decode = jwt_decode(localStorage.getItem("jwt"));
-  console.log(decode.sub);
 
   const submitPost = (e) => {
     e.preventDefault();
@@ -19,25 +18,24 @@ function AddPost() {
       content: content,
     };
 
-    fetch("post/create", {
-      method: "POST",
-      headers: {
-        Authorization: "Bearer " + localStorage.getItem("jwt"),
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(post),
-    }).then((res) => {
-      if (res.status === 201) {
-        history.push("/");
-        window.location.reload();
-      }
-    });
+    FetchPostData.createPost(post)
+      .then((res) => {
+        if (res.status === 201) {
+          history.push("/");
+          console.log(res);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        setErrorMessage(err);
+      });
   };
 
   return (
     <div className="row">
       <form className="col s12">
         <h4>Create Post</h4>
+        {errorMessage && <h1>{errorMessage}</h1>}
         <div className="row">
           <div className="input-field col s6">
             <i className="material-icons prefix">mode_edit</i>
@@ -57,6 +55,7 @@ function AddPost() {
             type="subnmit"
             name="action"
             onClick={submitPost}
+            disabled={content ? false : true}
           >
             <i className="material-icons right">send</i>
             Post

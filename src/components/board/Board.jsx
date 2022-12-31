@@ -4,15 +4,19 @@ import io from "socket.io-client";
 import "./style.css";
 
 class Board extends React.Component {
+  jwt = localStorage.getItem("jwt");
   timeout;
-  socket = io.connect("http://localhost:3000");
+  socket = io.connect("http://localhost:3000", {
+    auth: {
+      token: this.jwt,
+    },
+  });
 
   constructor(props) {
     super(props);
-
+    console.log(this.socket);
     this.socket.on("canvas-data", function (data) {
-      const user = JSON.parse(localStorage.getItem("user"));
-      console.log(user.username);
+      //const user = JSON.parse(localStorage.getItem("user"));
       var root = this;
       var interval = setInterval(function () {
         if (root.isDrawing) return;

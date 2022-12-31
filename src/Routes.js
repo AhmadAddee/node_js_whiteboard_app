@@ -1,14 +1,14 @@
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import AddUser from "./components/AddUser";
 import LogInPage from "./login/LogInPage";
-import Post from "./components/Post";
+import Post from "./components/PostHome/Post";
 import PrivateRoute from "./authentication/PrivateRoute";
 import { useState } from "react";
 import Profile from "./components/Profile";
-import AddPost from "./components/AddPost";
+import AddPost from "./components/PostHome/AddPost";
 import User from "./components/User";
 import LogOutPage from "./login/Logout";
-import Messages from "./components/Messages";
+import Messages from "./components/messages/Messages";
 import Container from "./components/container/Container";
 import Chart from "./components/chart/Chart";
 

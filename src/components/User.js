@@ -1,27 +1,18 @@
-import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
 import SingleUser from "./SingleUser";
-import jwt_decode from "jwt-decode";
+//import jwt_decode from "jwt-decode";
 
-export default class User extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      user: {
-        username: "",
-        password: "",
-        fullName: "",
-        postList: [],
-        age: 0,
-      },
+function User() {
+  const [user, setuser] = useState({
+    username: "",
+    password: "",
+    fullName: "",
+    postList: [],
+    age: 0,
+  });
 
-      //username: jwt_decode(localStorage.getItem("jwt")).sub,
-      //url: "user/get-user?username=" + this.username,
-    };
-  }
-
-  componentDidMount() {
-    var username = jwt_decode(localStorage.getItem("jwt")).sub;
-    var url = "user/get-user?username=" + username;
+  useEffect(() => {
+    var url = "http://localhost:8081/user/get-user";
     console.log(url);
     fetch(url, {
       headers: {
@@ -30,16 +21,16 @@ export default class User extends Component {
       },
     })
       .then((response) => response.json())
-      .then((data) => this.setState({ user: data }));
-  }
+      .then((data) => setuser(data));
+  }, []);
 
-  render() {
-    return (
+  return (
+    <div>
       <div>
-        <div>
-          <SingleUser item={this.state.user} />
-        </div>
+        <SingleUser item={user} />
       </div>
-    );
-  }
+    </div>
+  );
 }
+
+export default User;

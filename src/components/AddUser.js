@@ -1,11 +1,12 @@
 import React from "react";
 import { useState } from "react";
 import { useHistory } from "react-router-dom";
-import { useToken } from "../authentication/useToken";
-import axios from "axios";
+//import { useToken } from "../authentication/useToken";
+//import axios from "axios";
+import AuthService from "../services/auth-service";
 
 function AddUser() {
-  const [token, setToken] = useToken();
+  //const [token, setToken] = useToken();
 
   const [username, setUsername] = useState("");
   const [fullName, setFullName] = useState("");
@@ -13,30 +14,46 @@ function AddUser() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [age, setAge] = useState(0);
 
+  const [errorMessage, setErrorMessage] = useState("");
   const history = useHistory();
 
-  const submitUser = async () => {
-    //e.preventDefault();
+  const submitUser = (e) => {
+    e.preventDefault();
 
-    const response = await axios.post("http://localhost:8080/user/add", {
+    AuthService.register(username, fullName, password, age)
+      .then((response) => {
+        console.log(response);
+        history.push("/login");
+        window.location.reload();
+      })
+      .catch((error) => {
+        setErrorMessage(
+          error.message +
+            "The username already exists, try with another username!"
+        );
+      });
+    /*
+    const response = await axios.post("http://localhost:8081/user/add", {
       username: username,
       fullName: fullName,
       password: password,
       age: age,
     });
 
-    const { token } = response.data;
-    setToken(token);
+    //const { token } = response.data;
+    //setToken(token);
 
-    history.push("/login");
-    window.location.reload();
+    console.log(response.data);
+*/
+    // history.push("/login");
+    // window.location.reload();
   };
 
   return (
     <div className="row">
       <form className="col s12">
         <h1>Sign up</h1>
-
+        {errorMessage && <div>{errorMessage}</div>}
         <div className="row">
           <div className="input-field col s6">
             <i className="material-icons prefix">account_circle</i>

@@ -10,25 +10,34 @@ class AuthService {
         password,
       })
       .then((response) => {
-        if (response.data.accessToken) {
-          console.log("From auth-service: " + response.data);
+        if (response.data.accessToken !== null) {
           localStorage.setItem("user", JSON.stringify(response.data));
+          localStorage.setItem("jwt", response.data.accessToken);
+          console.log("From auth-service: " + localStorage.getItem("user"));
         }
-
         return response.data;
       });
   }
 
   logout() {
+    localStorage.removeItem("messageReceiver");
+    localStorage.removeItem("jwt");
     localStorage.removeItem("user");
     console.log("Logout");
   }
 
-  register(username, password) {
-    return axios.post(API_URL + "signup", {
-      username,
-      password,
-    });
+  register(username, fullName, password, age) {
+    return axios
+      .post(API_URL + "signup", {
+        username,
+        fullName,
+        password,
+        age,
+      })
+      .then((response) => {
+        if (response.status !== 201) return response.message;
+        return response;
+      });
   }
 
   getCurrentUser() {
