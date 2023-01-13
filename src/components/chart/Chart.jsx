@@ -17,6 +17,7 @@ import "../../App.css";
 
 function Chart() {
   const [data, hashMap] = ChartData();
+  console.log(data);
 
   return (
     <div style={{ textAlign: "center" }}>

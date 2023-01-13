@@ -46,6 +46,26 @@ function SinglePost({ item }) {
               </button>
             </div>
             <span>{item.timeAgo}</span>
+            <div>
+              <button
+                style={{ backgroundColor: "inherit", border: "none" }}
+                onClick={() => console.log("liked")}
+              >
+                ❤️ 0
+              </button>
+              <button
+                style={{ backgroundColor: "inherit", border: "none" }}
+                onClick={() => console.log("disliked")}
+              >
+                💩 0
+              </button>
+              <button
+                style={{ backgroundColor: "inherit", border: "none" }}
+                onClick={() => console.log("comment")}
+              >
+                📋
+              </button>
+            </div>
           </div>
         </div>
       </div>

@@ -18,11 +18,9 @@ export default function ChartData() {
       },
     })
       .then((response) => response.json())
-      .then((data) => console.log(data)) //
       .then((text) => setData(text))
       .then(() => {
         var unique = [];
-
         data.forEach((element) => {
           if (!unique.includes(element)) {
             unique.push(element);
@@ -36,7 +34,7 @@ export default function ChartData() {
           console.log(key + " = " + value);
         }
       });
-  }, []); //data
-  console.log("size before: ");
+  }, [data]); //data
+  console.log("size before: ", data, hashMap);
   return [data, hashMap];
 }
